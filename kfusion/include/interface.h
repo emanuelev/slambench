@@ -109,7 +109,7 @@ public:
 	}
 	;
 	SceneDepthReader(std::string dir, int fps, bool blocking_read) :
-			DepthReader(), _dir(dir), _size(make_uint2(640, 480)) {
+			DepthReader(), _dir(dir), _size(get_uint2(640, 480)) {
 		std::cerr << "No such directory " << dir << std::endl;
 		struct stat st;
 		lstat(dir.c_str(), &st);
@@ -132,7 +132,7 @@ public:
 		return (READER_SCENE);
 	}
 	inline float4 getK() {
-		return make_float4(481.20, 480.00, 319.50, 239.50);
+		return get_float4(481.20, 480.00, 319.50, 239.50);
 
 	}
 	inline uint2 getinputSize() {
@@ -312,7 +312,7 @@ public:
 		return _size;
 	}
 	inline float4 getK() {
-		return make_float4(531.15, 531.15, 640 / 2, 480 / 2);
+		return get_float4(531.15, 531.15, 640 / 2, 480 / 2);
 	}
 
 };
@@ -579,7 +579,7 @@ public:
 		return _size;
 	}
 	inline float4 getK() {
-		return make_float4(481.2, 480, 640/2, 480/2);
+		return get_float4(481.2, 480, 640/2, 480/2);
 
 	}
 
@@ -773,7 +773,7 @@ public:
         return _size;
     }
     inline float4 getK() {
-        return make_float4(481.2, 480, 640/2, 480/2);
+        return get_float4(481.2, 480, 640/2, 480/2);
 
     }
 

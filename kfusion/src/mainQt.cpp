@@ -106,8 +106,8 @@ int main(int argc, char ** argv) {
 
 	//  =========  BASIC PARAMETERS  (input size / computation size )  =========
 	uint2 inputSize =
-			(reader != NULL) ? reader->getinputSize() : make_uint2(640, 480);
-	const uint2 computationSize = make_uint2(
+			(reader != NULL) ? reader->getinputSize() : get_uint2(640, 480);
+	const uint2 computationSize = get_uint2(
 			inputSize.x / config.compute_size_ratio,
 			inputSize.y / config.compute_size_ratio);
 
@@ -205,11 +205,11 @@ int processAll(DepthReader *reader, bool processFrame, bool renderImages,
 	float3 pos;
 	int frame;
 	const uint2 inputSize =
-			(reader != NULL) ? reader->getinputSize() : make_uint2(640, 480);
+			(reader != NULL) ? reader->getinputSize() : get_uint2(640, 480);
 	float4 camera =
 			(reader != NULL) ?
 					(reader->getK() / config->compute_size_ratio) :
-					make_float4(0.0);
+					get_float4(0.0);
 	if (config->camera_overrided)
 		camera = config->camera / config->compute_size_ratio;
 

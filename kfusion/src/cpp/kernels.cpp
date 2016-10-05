@@ -150,7 +150,7 @@ void initVolumeKernel(Volume volume) {
 		for (unsigned int y = 0; y < volume.size.y; y++) {
 			for (unsigned int z = 0; z < volume.size.z; z++) {
 				//std::cout <<  x << " " << y << " " << z <<"\n";
-				volume.setints(x, y, z, make_float2(1.0f, 0.0f));
+				volume.setints(x, y, z, get_float2(1.0f, 0.0f));
 			}
 		}
 	TOCK("initVolumeKernel", volume.size.x * volume.size.y * volume.size.z);
@@ -178,7 +178,7 @@ void bilateralFilterKernel(float* out, const float* in, uint2 size,
 
 				for (int i = -r; i <= r; ++i) {
 					for (int j = -r; j <= r; ++j) {
-						uint2 curPos = make_uint2(clamp(x + i, 0u, size.x - 1),
+						uint2 curPos = get_uint2(clamp(x + i, 0u, size.x - 1),
 								clamp(y + j, 0u, size.y - 1));
 						const float curPix = in[curPos.x + curPos.y * size.x];
 						if (curPix > 0) {
@@ -208,9 +208,9 @@ void depth2vertexKernel(float3* vertex, const float * depth, uint2 imageSize,
 
 			if (depth[x + y * imageSize.x] > 0) {
 				vertex[x + y * imageSize.x] = depth[x + y * imageSize.x]
-						* (rotate(invK, make_float3(x, y, 1.f)));
+						* (rotate(invK, get_float3(x, y, 1.f)));
 			} else {
-				vertex[x + y * imageSize.x] = make_float3(0);
+				vertex[x + y * imageSize.x] = get_float3(0);
 			}
 		}
 	}
@@ -224,11 +224,11 @@ void vertex2normalKernel(float3 * out, const float3 * in, uint2 imageSize) {
         shared(out), private(x,y)
 	for (y = 0; y < imageSize.y; y++) {
 		for (x = 0; x < imageSize.x; x++) {
-			const uint2 pleft = make_uint2(max(int(x) - 1, 0), y);
-			const uint2 pright = make_uint2(min(x + 1, (int) imageSize.x - 1),
+			const uint2 pleft = get_uint2(max(int(x) - 1, 0), y);
+			const uint2 pright = get_uint2(min(x + 1, (int) imageSize.x - 1),
 					y);
-			const uint2 pup = make_uint2(x, max(int(y) - 1, 0));
-			const uint2 pdown = make_uint2(x,
+			const uint2 pup = get_uint2(x, max(int(y) - 1, 0));
+			const uint2 pdown = get_uint2(x,
 					min(y + 1, ((int) imageSize.y) - 1));
 
 			const float3 left = in[pleft.x + imageSize.x * pleft.y];
@@ -500,7 +500,7 @@ void trackKernel(TrackData* output, const float3* inVertex,
 		const Matrix4 view, const float dist_threshold,
 		const float normal_threshold) {
 	TICK();
-	uint2 pixel = make_uint2(0, 0);
+	uint2 pixel = get_uint2(0, 0);
 	unsigned int pixely, pixelx;
 #pragma omp parallel for \
 	    shared(output), private(pixel,pixelx,pixely)
@@ -519,7 +519,7 @@ void trackKernel(TrackData* output, const float3* inVertex,
 			const float3 projectedVertex = Ttrack
 					* inVertex[pixel.x + pixel.y * inSize.x];
 			const float3 projectedPos = view * projectedVertex;
-			const float2 projPixel = make_float2(
+			const float2 projPixel = get_float2(
 					projectedPos.x / projectedPos.z + 0.5f,
 					projectedPos.y / projectedPos.z + 0.5f);
 			if (projPixel.x < 0 || projPixel.x > refSize.x - 1
@@ -528,7 +528,7 @@ void trackKernel(TrackData* output, const float3* inVertex,
 				continue;
 			}
 
-			const uint2 refPixel = make_uint2(projPixel.x, projPixel.y);
+			const uint2 refPixel = get_uint2(projPixel.x, projPixel.y);
 			const float3 referenceNormal = refNormal[refPixel.x
 					+ refPixel.y * refSize.x];
 
@@ -591,13 +591,13 @@ void mm2metersKernel(float * out, uint2 outSize, const ushort * in,
 void halfSampleRobustImageKernel(float* out, const float* in, uint2 inSize,
 		const float e_d, const int r) {
 	TICK();
-	uint2 outSize = make_uint2(inSize.x / 2, inSize.y / 2);
+	uint2 outSize = get_uint2(inSize.x / 2, inSize.y / 2);
 	unsigned int y;
 #pragma omp parallel for \
         shared(out), private(y)
 	for (y = 0; y < outSize.y; y++) {
 		for (unsigned int x = 0; x < outSize.x; x++) {
-			uint2 pixel = make_uint2(x, y);
+			uint2 pixel = get_uint2(x, y);
 			const uint2 centerPixel = 2 * pixel;
 
 			float sum = 0.0f;
@@ -606,11 +606,11 @@ void halfSampleRobustImageKernel(float* out, const float* in, uint2 inSize,
 					+ centerPixel.y * inSize.x];
 			for (int i = -r + 1; i <= r; ++i) {
 				for (int j = -r + 1; j <= r; ++j) {
-					uint2 cur = make_uint2(
+					uint2 cur = get_uint2(
 							clamp(
-									make_int2(centerPixel.x + j,
-											centerPixel.y + i), make_int2(0),
-									make_int2(2 * outSize.x - 1,
+									get_int2(centerPixel.x + j,
+											centerPixel.y + i), get_int2(0),
+									get_int2(2 * outSize.x - 1,
 											2 * outSize.y - 1)));
 					float current = in[cur.x + cur.y * inSize.x];
 					if (fabsf(current - center) < e_d) {
@@ -630,7 +630,7 @@ void integrateKernel(Volume vol, const float* depth, uint2 depthSize,
 		const float maxweight) {
 	TICK();
 	const float3 delta = rotate(invTrack,
-			make_float3(0, 0, vol.dim.z / vol.size.z));
+			get_float3(0, 0, vol.dim.z / vol.size.z));
 	const float3 cameraDelta = rotate(K, delta);
 	unsigned int y;
 #pragma omp parallel for \
@@ -638,7 +638,7 @@ void integrateKernel(Volume vol, const float* depth, uint2 depthSize,
 	for (y = 0; y < vol.size.y; y++)
 		for (unsigned int x = 0; x < vol.size.x; x++) {
 
-			uint3 pix = make_uint3(x, y, 0); //pix.x = x;pix.y = y;
+			uint3 pix = get_uint3(x, y, 0); //pix.x = x;pix.y = y;
 			float3 pos = invTrack * vol.pos(pix);
 			float3 cameraX = K * pos;
 
@@ -646,12 +646,12 @@ void integrateKernel(Volume vol, const float* depth, uint2 depthSize,
 					++pix.z, pos += delta, cameraX += cameraDelta) {
 				if (pos.z < 0.0001f) // some near plane constraint
 					continue;
-				const float2 pixel = make_float2(cameraX.x / cameraX.z + 0.5f,
+				const float2 pixel = get_float2(cameraX.x / cameraX.z + 0.5f,
 						cameraX.y / cameraX.z + 0.5f);
 				if (pixel.x < 0 || pixel.x > depthSize.x - 1 || pixel.y < 0
 						|| pixel.y > depthSize.y - 1)
 					continue;
-				const uint2 px = make_uint2(pixel.x, pixel.y);
+				const uint2 px = get_uint2(pixel.x, pixel.y);
 				if (depth[px.x + px.y * depthSize.x] == 0)
 					continue;
 				const float diff =
@@ -676,12 +676,12 @@ float4 raycast(const Volume volume, const uint2 pos, const Matrix4 view,
 		const float largestep) {
 
 	const float3 origin = get_translation(view);
-	const float3 direction = rotate(view, make_float3(pos.x, pos.y, 1.f));
+	const float3 direction = rotate(view, get_float3(pos.x, pos.y, 1.f));
 
 	// intersect ray with a box
 	// http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm
 	// compute intersection of ray with all six bbox planes
-	const float3 invR = make_float3(1.0f) / direction;
+	const float3 invR = get_float3(1.0f) / direction;
 	const float3 tbot = -1 * invR * origin;
 	const float3 ttop = invR * (volume.dim - origin);
 
@@ -716,11 +716,11 @@ float4 raycast(const Volume volume, const uint2 pos, const Matrix4 view,
 			}
 			if (f_tt < 0) {           // got it, calculate accurate intersection
 				t = t + stepsize * f_tt / (f_t - f_tt);
-				return make_float4(origin + direction * t, t);
+				return get_float4(origin + direction * t, t);
 			}
 		}
 	}
-	return make_float4(0);
+	return get_float4(0);
 
 }
 void raycastKernel(float3* vertex, float3* normal, uint2 inputSize,
@@ -733,13 +733,13 @@ void raycastKernel(float3* vertex, float3* normal, uint2 inputSize,
 	for (y = 0; y < inputSize.y; y++)
 		for (unsigned int x = 0; x < inputSize.x; x++) {
 
-			uint2 pos = make_uint2(x, y);
+			uint2 pos = get_uint2(x, y);
 
 			const float4 hit = raycast(integration, pos, view, nearPlane,
 					farPlane, step, largestep);
 			if (hit.w > 0.0) {
-				vertex[pos.x + pos.y * inputSize.x] = make_float3(hit);
-				float3 surfNorm = integration.grad(make_float3(hit));
+				vertex[pos.x + pos.y * inputSize.x] = get_float3(hit);
+				float3 surfNorm = integration.grad(get_float3(hit));
 				if (length(surfNorm) == 0) {
 					//normal[pos] = normalize(surfNorm); // APN added
 					normal[pos.x + pos.y * inputSize.x].x = KFUSION_INVALID;
@@ -748,8 +748,8 @@ void raycastKernel(float3* vertex, float3* normal, uint2 inputSize,
 				}
 			} else {
 				//std::cerr<< "RAYCAST MISS "<<  pos.x << " " << pos.y <<"  " << hit.w <<"\n";
-				vertex[pos.x + pos.y * inputSize.x] = make_float3(0);
-				normal[pos.x + pos.y * inputSize.x] = make_float3(KFUSION_INVALID, 0,
+				vertex[pos.x + pos.y * inputSize.x] = get_float3(0);
+				normal[pos.x + pos.y * inputSize.x] = get_float3(KFUSION_INVALID, 0,
 						0);
 			}
 		}
@@ -801,10 +801,10 @@ void renderNormalKernel(uchar3* out, const float3* normal, uint2 normalSize) {
 			uint pos = (x + y * normalSize.x);
 			float3 n = normal[pos];
 			if (n.x == -2) {
-				out[pos] = make_uchar3(0, 0, 0);
+				out[pos] = get_uchar3(0, 0, 0);
 			} else {
 				n = normalize(n);
-				out[pos] = make_uchar3(n.x * 128 + 128, n.y * 128 + 128,
+				out[pos] = get_uchar3(n.x * 128 + 128, n.y * 128 + 128,
 						n.z * 128 + 128);
 			}
 		}
@@ -827,10 +827,10 @@ void renderDepthKernel(uchar4* out, float * depth, uint2 depthSize,
 			unsigned int pos = rowOffeset + x;
 
 			if (depth[pos] < nearPlane)
-				out[pos] = make_uchar4(255, 255, 255, 0); // The forth value is a padding in order to align memory
+				out[pos] = get_uchar4(255, 255, 255, 0); // The forth value is a padding in order to align memory
 			else {
 				if (depth[pos] > farPlane)
-					out[pos] = make_uchar4(0, 0, 0, 0); // The forth value is a padding in order to align memory
+					out[pos] = get_uchar4(0, 0, 0, 0); // The forth value is a padding in order to align memory
 				else {
 					const float d = (depth[pos] - nearPlane) * rangeScale;
 					out[pos] = gs2rgb(d);
@@ -852,25 +852,25 @@ void renderTrackKernel(uchar4* out, const TrackData* data, uint2 outSize) {
 			uint pos = x + y * outSize.x;
 			switch (data[pos].result) {
 			case 1:
-				out[pos] = make_uchar4(128, 128, 128, 0);  // ok	 GREY
+				out[pos] = get_uchar4(128, 128, 128, 0);  // ok	 GREY
 				break;
 			case -1:
-				out[pos] = make_uchar4(0, 0, 0, 0);      // no input BLACK
+				out[pos] = get_uchar4(0, 0, 0, 0);      // no input BLACK
 				break;
 			case -2:
-				out[pos] = make_uchar4(255, 0, 0, 0);        // not in image RED
+				out[pos] = get_uchar4(255, 0, 0, 0);        // not in image RED
 				break;
 			case -3:
-				out[pos] = make_uchar4(0, 255, 0, 0);    // no correspondence GREEN
+				out[pos] = get_uchar4(0, 255, 0, 0);    // no correspondence GREEN
 				break;
 			case -4:
-				out[pos] = make_uchar4(0, 0, 255, 0);        // to far away BLUE
+				out[pos] = get_uchar4(0, 0, 255, 0);        // to far away BLUE
 				break;
 			case -5:
-				out[pos] = make_uchar4(255, 255, 0, 0);     // wrong normal YELLOW
+				out[pos] = get_uchar4(255, 255, 0, 0);     // wrong normal YELLOW
 				break;
 			default:
-				out[pos] = make_uchar4(255, 128, 128, 0);
+				out[pos] = get_uchar4(255, 128, 128, 0);
 				break;
 			}
 		}
@@ -889,23 +889,23 @@ void renderVolumeKernel(uchar4* out, const uint2 depthSize, const Volume volume,
 		for (unsigned int x = 0; x < depthSize.x; x++) {
 			const uint pos = x + y * depthSize.x;
 
-			float4 hit = raycast(volume, make_uint2(x, y), view, nearPlane,
+			float4 hit = raycast(volume, get_uint2(x, y), view, nearPlane,
 					farPlane, step, largestep);
 			if (hit.w > 0) {
-				const float3 test = make_float3(hit);
+				const float3 test = get_float3(hit);
 				const float3 surfNorm = volume.grad(test);
 				if (length(surfNorm) > 0) {
 					const float3 diff = normalize(light - test);
 					const float dir = fmaxf(dot(normalize(surfNorm), diff),
 							0.f);
-					const float3 col = clamp(make_float3(dir) + ambient, 0.f,
+					const float3 col = clamp(get_float3(dir) + ambient, 0.f,
 							1.f) * 255;
-					out[pos] = make_uchar4(col.x, col.y, col.z, 0); // The forth value is a padding to align memory
+					out[pos] = get_uchar4(col.x, col.y, col.z, 0); // The forth value is a padding to align memory
 				} else {
-					out[pos] = make_uchar4(0, 0, 0, 0); // The forth value is a padding to align memory
+					out[pos] = get_uchar4(0, 0, 0, 0); // The forth value is a padding to align memory
 				}
 			} else {
-				out[pos] = make_uchar4(0, 0, 0, 0); // The forth value is a padding to align memory
+				out[pos] = get_uchar4(0, 0, 0, 0); // The forth value is a padding to align memory
 			}
 		}
 	}
@@ -930,7 +930,7 @@ bool Kfusion::tracking(float4 k, float icp_threshold, uint tracking_rate,
 	// half sample the input depth maps into the pyramid levels
 	for (unsigned int i = 1; i < iterations.size(); ++i) {
 		halfSampleRobustImageKernel(ScaledDepth[i], ScaledDepth[i - 1],
-				make_uint2(computationSize.x / (int) pow(2, i - 1),
+				get_uint2(computationSize.x / (int) pow(2, i - 1),
 						computationSize.y / (int) pow(2, i - 1)), e_delta * 3, 1);
 	}
 
@@ -941,14 +941,14 @@ bool Kfusion::tracking(float4 k, float icp_threshold, uint tracking_rate,
 		depth2vertexKernel(inputVertex[i], ScaledDepth[i], localimagesize,
 				invK);
 		vertex2normalKernel(inputNormal[i], inputVertex[i], localimagesize);
-		localimagesize = make_uint2(localimagesize.x / 2, localimagesize.y / 2);
+		localimagesize = get_uint2(localimagesize.x / 2, localimagesize.y / 2);
 	}
 
 	oldPose = pose;
 	const Matrix4 projectReference = getCameraMatrix(k) * inverse(raycastPose);
 
 	for (int level = iterations.size() - 1; level >= 0; --level) {
-		uint2 localimagesize = make_uint2(
+		uint2 localimagesize = get_uint2(
 				computationSize.x / (int) pow(2, level),
 				computationSize.y / (int) pow(2, level));
 		for (int i = 0; i < iterations[level]; ++i) {

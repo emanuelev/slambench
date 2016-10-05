@@ -90,7 +90,7 @@ int main(int argc, char ** argv) {
 
 	//  =========  BASIC PARAMETERS  (input size / computation size )  =========
 
-	const uint2 computationSize = make_uint2(
+	const uint2 computationSize = get_uint2(
 			inputSize.x / config.compute_size_ratio,
 			inputSize.y / config.compute_size_ratio);
 	float4 camera = reader->getK() / config.compute_size_ratio;

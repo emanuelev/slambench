@@ -33,8 +33,9 @@
 // Internal dependencies
 #include <default_parameters.h>
 #ifndef CUDA
-#include <vector_types.h>
-#include <cutil_math.h>
+#include <data_types.h>
+#include <data_constructors.h>
+#include <math_helper.h>
 #endif
 
 //External dependencies
@@ -152,14 +153,14 @@ struct Volume {
 	short2 * data;
 
 	Volume() {
-		size = make_uint3(0);
-		dim = make_float3(1);
+		size = get_uint3(0);
+		dim = get_float3(1);
 		data = NULL;
 	}
 
 	float2 operator[](const uint3 & pos) const {
 		const short2 d = data[pos.x + pos.y * size.x + pos.z * size.x * size.y];
-		return make_float2(d.x * 0.00003051944088f, d.y); //  / 32766.0f
+		return get_float2(d.x * 0.00003051944088f, d.y); //  / 32766.0f
 	}
 
 	float v(const uint3 & pos) const {
@@ -175,29 +176,29 @@ struct Volume {
 
 	void setints(const unsigned x, const unsigned y, const unsigned z,
 			const float2 &d) {
-		data[x + y * size.x + z * size.x * size.y] = make_short2(d.x * 32766.0f,
+		data[x + y * size.x + z * size.x * size.y] = get_short2(d.x * 32766.0f,
 				d.y);
 	}
 
 	void set(const uint3 & pos, const float2 & d) {
-		data[pos.x + pos.y * size.x + pos.z * size.x * size.y] = make_short2(
+		data[pos.x + pos.y * size.x + pos.z * size.x * size.y] = get_short2(
 				d.x * 32766.0f, d.y);
 	}
 	float3 pos(const uint3 & p) const {
-		return make_float3((p.x + 0.5f) * dim.x / size.x,
+		return get_float3((p.x + 0.5f) * dim.x / size.x,
 				(p.y + 0.5f) * dim.y / size.y, (p.z + 0.5f) * dim.z / size.z);
 	}
 
 	float interp(const float3 & pos) const {
 
-		const float3 scaled_pos = make_float3((pos.x * size.x / dim.x) - 0.5f,
+		const float3 scaled_pos = get_float3((pos.x * size.x / dim.x) - 0.5f,
 				(pos.y * size.y / dim.y) - 0.5f,
 				(pos.z * size.z / dim.z) - 0.5f);
-		const int3 base = make_int3(floorf(scaled_pos));
+		const int3 base = get_int3(floorf(scaled_pos));
 		const float3 factor = fracf(scaled_pos);
-		const int3 lower = max(base, make_int3(0));
-		const int3 upper = min(base + make_int3(1),
-				make_int3(size) - make_int3(1));
+		const int3 lower = max(base, get_int3(0));
+		const int3 upper = min(base + get_int3(1),
+				get_int3(size) - get_int3(1));
 		return (((vs2(lower.x, lower.y, lower.z) * (1 - factor.x)
 				+ vs2(upper.x, lower.y, lower.z) * factor.x) * (1 - factor.y)
 				+ (vs2(lower.x, upper.y, lower.z) * (1 - factor.x)
@@ -213,17 +214,17 @@ struct Volume {
 	}
 
 	float3 grad(const float3 & pos) const {
-		const float3 scaled_pos = make_float3((pos.x * size.x / dim.x) - 0.5f,
+		const float3 scaled_pos = get_float3((pos.x * size.x / dim.x) - 0.5f,
 				(pos.y * size.y / dim.y) - 0.5f,
 				(pos.z * size.z / dim.z) - 0.5f);
-		const int3 base = make_int3(floorf(scaled_pos));
+		const int3 base = get_int3(floorf(scaled_pos));
 		const float3 factor = fracf(scaled_pos);
-		const int3 lower_lower = max(base - make_int3(1), make_int3(0));
-		const int3 lower_upper = max(base, make_int3(0));
-		const int3 upper_lower = min(base + make_int3(1),
-				make_int3(size) - make_int3(1));
-		const int3 upper_upper = min(base + make_int3(2),
-				make_int3(size) - make_int3(1));
+		const int3 lower_lower = max(base - get_int3(1), get_int3(0));
+		const int3 lower_upper = max(base, get_int3(0));
+		const int3 upper_lower = min(base + get_int3(1),
+				get_int3(size) - get_int3(1));
+		const int3 upper_upper = min(base + get_int3(2),
+				get_int3(size) - get_int3(1));
 		const int3 & lower = lower_upper;
 		const int3 & upper = upper_lower;
 
@@ -296,7 +297,7 @@ struct Volume {
 										* factor.x) * factor.y) * factor.z;
 
 		return gradient
-				* make_float3(dim.x / size.x, dim.y / size.y, dim.z / size.z)
+				* get_float3(dim.x / size.x, dim.y / size.y, dim.z / size.z)
 				* (0.5f * 0.00003051944088f);
 	}
 
@@ -319,7 +320,7 @@ typedef struct sMatrix4 {
 } Matrix4;
 
 inline float3 get_translation(const Matrix4 view) {
-	return make_float3(view.data[0].w, view.data[1].w, view.data[2].w);
+	return get_float3(view.data[0].w, view.data[1].w, view.data[2].w);
 }
 
 struct TrackData {
@@ -328,37 +329,37 @@ struct TrackData {
 	float J[6];
 };
 
-inline __host__      __device__ float3 operator*(const Matrix4 & M,
+inline float3 operator*(const Matrix4 & M,
 		const float3 & v) {
-	return make_float3(dot(make_float3(M.data[0]), v) + M.data[0].w,
-			dot(make_float3(M.data[1]), v) + M.data[1].w,
-			dot(make_float3(M.data[2]), v) + M.data[2].w);
+	return get_float3(dot(get_float3(M.data[0]), v) + M.data[0].w,
+			dot(get_float3(M.data[1]), v) + M.data[1].w,
+			dot(get_float3(M.data[2]), v) + M.data[2].w);
 }
 
 inline float3 rotate(const Matrix4 & M, const float3 & v) {
-	return make_float3(dot(make_float3(M.data[0]), v),
-			dot(make_float3(M.data[1]), v), dot(make_float3(M.data[2]), v));
+	return get_float3(dot(get_float3(M.data[0]), v),
+			dot(get_float3(M.data[1]), v), dot(get_float3(M.data[2]), v));
 }
 
 inline Matrix4 getCameraMatrix(const float4 & k) {
 	Matrix4 K;
-	K.data[0] = make_float4(k.x, 0, k.z, 0);
-	K.data[1] = make_float4(0, k.y, k.w, 0);
-	K.data[2] = make_float4(0, 0, 1, 0);
-	K.data[3] = make_float4(0, 0, 0, 1);
+	K.data[0] = get_float4(k.x, 0, k.z, 0);
+	K.data[1] = get_float4(0, k.y, k.w, 0);
+	K.data[2] = get_float4(0, 0, 1, 0);
+	K.data[3] = get_float4(0, 0, 0, 1);
 	return K;
 }
 
 inline Matrix4 getInverseCameraMatrix(const float4 & k) {
 	Matrix4 invK;
-	invK.data[0] = make_float4(1.0f / k.x, 0, -k.z / k.x, 0);
-	invK.data[1] = make_float4(0, 1.0f / k.y, -k.w / k.y, 0);
-	invK.data[2] = make_float4(0, 0, 1, 0);
-	invK.data[3] = make_float4(0, 0, 0, 1);
+	invK.data[0] = get_float4(1.0f / k.x, 0, -k.z / k.x, 0);
+	invK.data[1] = get_float4(0, 1.0f / k.y, -k.w / k.y, 0);
+	invK.data[2] = get_float4(0, 0, 1, 0);
+	invK.data[3] = get_float4(0, 0, 0, 1);
 	return invK;
 }
 inline float4 operator*(const Matrix4 & M, const float4 & v) {
-	return make_float4(dot(M.data[0], v), dot(M.data[1], v), dot(M.data[2], v),
+	return get_float4(dot(M.data[0], v), dot(M.data[1], v), dot(M.data[2], v),
 			dot(M.data[3], v));
 }
 

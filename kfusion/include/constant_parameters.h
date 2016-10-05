@@ -22,7 +22,7 @@ const float nearPlane = 0.4f;
 const float farPlane = 4.0f;
 const float delta = 4.0f;
 
-const float3 light = make_float3(1, 1, -1.0);
-const float3 ambient = make_float3(0.1, 0.1, 0.1);
+const float3 light = get_float3(1, 1, -1.0);
+const float3 ambient = get_float3(0.1, 0.1, 0.1);
 
 #endif /* CONSTANT_PARAMETERS_H_ */

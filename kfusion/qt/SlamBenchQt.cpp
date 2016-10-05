@@ -91,12 +91,12 @@ static void newKfusion(bool resetPose) {
 		delete *kfusion_pp;
 	if (!resetPose)
 		*kfusion_pp = new Kfusion(
-				make_uint2(640 / config->compute_size_ratio,
+				get_uint2(640 / config->compute_size_ratio,
 						480 / config->compute_size_ratio),
-				make_uint3(config->volume_resolution.x,
+				get_uint3(config->volume_resolution.x,
 						config->volume_resolution.x,
 						config->volume_resolution.x),
-				make_float3(config->volume_size.x, config->volume_size.x,
+				get_float3(config->volume_size.x, config->volume_size.x,
 						config->volume_size.x), init_pose, config->pyramid);
 	else {
 		trans = SE3<float>::exp(
@@ -106,15 +106,15 @@ static void newKfusion(bool resetPose) {
 						* config->volume_size.x);
 		rot = makeVector(0.0, 0, 0, 0, 0, 0);
 		*kfusion_pp = new Kfusion(
-				make_uint2(640 / config->compute_size_ratio,
+				get_uint2(640 / config->compute_size_ratio,
 						480 / config->compute_size_ratio),
-				make_uint3(config->volume_resolution.x,
+				get_uint3(config->volume_resolution.x,
 						config->volume_resolution.x,
 						config->volume_resolution.x),
-				make_float3(config->volume_size.x, config->volume_size.x,
+				get_float3(config->volume_size.x, config->volume_size.x,
 						config->volume_size.x),
 				config->initial_pos_factor
-						* make_float3(config->volume_size.x,
+						* get_float3(config->volume_size.x,
 								config->volume_size.x, config->volume_size.x),
 				config->pyramid);
 	}

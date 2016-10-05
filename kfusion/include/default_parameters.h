@@ -10,11 +10,15 @@
 #ifndef DEFAULT_PARAMETERS_H_
 #define DEFAULT_PARAMETERS_H_
 
-#include <vector_types.h>
-#include <cutil_math.h>
 #include <vector>
 #include <sstream>
 #include <getopt.h>
+
+#ifndef CUDA
+#include <data_types.h>
+#include <data_constructors.h>
+#include <math_helper.h>
+#endif
 
 #include <constant_parameters.h>
 
@@ -33,9 +37,9 @@ const int default_compute_size_ratio = 1;
 const int default_integration_rate = 2;
 const int default_rendering_rate = 4;
 const int default_tracking_rate = 1;
-const uint3 default_volume_resolution = make_uint3(256, 256, 256);
-const float3 default_volume_size = make_float3(2.f, 2.f, 2.f);
-const float3 default_initial_pos_factor = make_float3(0.5f, 0.5f, 0.0f);
+const uint3 default_volume_resolution = get_uint3(256, 256, 256);
+const float3 default_volume_size = get_float3(2.f, 2.f, 2.f);
+const float3 default_initial_pos_factor = get_float3(0.5f, 0.5f, 0.0f);
 const bool default_no_gui = false;
 const bool default_render_volume_fullsize = false;
 const std::string default_dump_volume_file = "";

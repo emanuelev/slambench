@@ -57,8 +57,8 @@ cl_kernel initVolume_ocl_kernel;
 static const size_t size_of_group = 64;
 static const size_t number_of_groups = 8;
 
-uint2 computationSizeBkp = make_uint2(0, 0);
-uint2 outputImageSizeBkp = make_uint2(0, 0);
+uint2 computationSizeBkp = get_uint2(0, 0);
+uint2 outputImageSizeBkp = get_uint2(0, 0);
 
 void init() {
 	opencl_init();
@@ -314,8 +314,8 @@ Kfusion::~Kfusion() {
 	renderTrack_ocl_kernel = NULL;
 	renderDepth_ocl_kernel = NULL;
 
-	computationSizeBkp = make_uint2(0, 0);
-	outputImageSizeBkp = make_uint2(0, 0);
+	computationSizeBkp = get_uint2(0, 0);
+	outputImageSizeBkp = get_uint2(0, 0);
 
 	clean();
 }
@@ -362,7 +362,7 @@ void Kfusion::renderVolume(uchar4 * out, uint2 outputSize, int frame, int rate,
     // Create render opencl buffer if needed
     if(outputImageSizeBkp.x < outputSize.x || outputImageSizeBkp.y < outputSize.y || ocl_output_render_buffer == NULL) 
     {
-	outputImageSizeBkp = make_uint2(outputSize.x, outputSize.y);
+	outputImageSizeBkp = get_uint2(outputSize.x, outputSize.y);
 	if(ocl_output_render_buffer != NULL){
 	    std::cout << "Release" << std::endl;
 	    clError = clReleaseMemObject(ocl_output_render_buffer);
@@ -425,7 +425,7 @@ void Kfusion::renderTrack(uchar4 * out, uint2 outputSize) {
     // Create render opencl buffer if needed
     if(outputImageSizeBkp.x < outputSize.x || outputImageSizeBkp.y < outputSize.y || ocl_output_render_buffer == NULL) 
     {
-	outputImageSizeBkp = make_uint2(outputSize.x, outputSize.y);
+	outputImageSizeBkp = get_uint2(outputSize.x, outputSize.y);
 	if(ocl_output_render_buffer != NULL){
 	    std::cout << "Release" << std::endl;
 	    clError = clReleaseMemObject(ocl_output_render_buffer);
@@ -458,7 +458,7 @@ void Kfusion::renderDepth(uchar4 * out, uint2 outputSize) {
     // Create render opencl buffer if needed
     if(outputImageSizeBkp.x < outputSize.x || outputImageSizeBkp.y < outputSize.y || ocl_output_render_buffer == NULL) 
     {
-	outputImageSizeBkp = make_uint2(outputSize.x, outputSize.y);
+	outputImageSizeBkp = get_uint2(outputSize.x, outputSize.y);
 	if(ocl_output_render_buffer != NULL){
 	    std::cout << "Release" << std::endl;
 	    clError = clReleaseMemObject(ocl_output_render_buffer);
@@ -548,7 +548,7 @@ bool Kfusion::preprocessing(const uint16_t * inputDepth, const uint2 inSize) {
 	int ratio = inSize.x / outSize.x;
 
 	if (computationSizeBkp.x < inSize.x|| computationSizeBkp.y < inSize.y || ocl_depth_buffer == NULL) {
-		computationSizeBkp = make_uint2(inSize.x, inSize.y);
+		computationSizeBkp = get_uint2(inSize.x, inSize.y);
 		if (ocl_depth_buffer != NULL) {
 			clError = clReleaseMemObject(ocl_depth_buffer);
 			checkErr(clError, "clReleaseMemObject");
@@ -616,8 +616,8 @@ bool Kfusion::tracking(float4 k, float icp_threshold, uint tracking_rate,
 
 	// half sample the input depth maps into the pyramid levels
 	for (unsigned int i = 1; i < iterations.size(); ++i) {
-		//halfSampleRobustImage(ScaledDepth[i], ScaledDepth[i-1], make_uint2( inputSize.x  / (int)pow(2,i) , inputSize.y / (int)pow(2,i) )  , e_delta * 3, 1);
-		uint2 outSize = make_uint2(computationSize.x / (int) pow(2, i),
+		//halfSampleRobustImage(ScaledDepth[i], ScaledDepth[i-1], get_uint2( inputSize.x  / (int)pow(2,i) , inputSize.y / (int)pow(2,i) )  , e_delta * 3, 1);
+		uint2 outSize = get_uint2(computationSize.x / (int) pow(2, i),
 				computationSize.y / (int) pow(2, i));
 
 		float e_d = e_delta * 3;
@@ -703,13 +703,13 @@ bool Kfusion::tracking(float4 k, float icp_threshold, uint tracking_rate,
 				NULL, globalWorksize2, NULL, 0, NULL, NULL);
 		checkErr(clError, "clEnqueueNDRangeKernel");
 
-		localimagesize = make_uint2(localimagesize.x / 2, localimagesize.y / 2);
+		localimagesize = get_uint2(localimagesize.x / 2, localimagesize.y / 2);
 	}
 	oldPose = pose;
 	const Matrix4 projectReference = getCameraMatrix(k) * inverse(raycastPose);
 
 	for (int level = iterations.size() - 1; level >= 0; --level) {
-		uint2 localimagesize = make_uint2(
+		uint2 localimagesize = get_uint2(
 				computationSize.x / (int) pow(2, level),
 				computationSize.y / (int) pow(2, level));
 		for (int i = 0; i < iterations[level]; ++i) {
@@ -885,9 +885,9 @@ bool Kfusion::integration(float4 k, uint integration_rate, float mu,
 		const Matrix4 invTrack = inverse(pose);
 		const Matrix4 K = getCameraMatrix(k);
 
-		//uint3 pix = make_uint3(thr2pos2());
+		//uint3 pix = get_uint3(thr2pos2());
 		const float3 delta = rotate(invTrack,
-				make_float3(0, 0, volumeDimensions.z / volumeResolution.z));
+				get_float3(0, 0, volumeDimensions.z / volumeResolution.z));
 		const float3 cameraDelta = rotate(K, delta);
 
 		// set param and run kernel

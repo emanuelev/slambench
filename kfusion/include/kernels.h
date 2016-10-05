@@ -98,7 +98,7 @@ private:
 public:
 	Kfusion(uint2 inputSize, uint3 volumeResolution, float3 volumeDimensions,
 			float3 initPose, std::vector<int> & pyramid) :
-			computationSize(make_uint2(inputSize.x, inputSize.y)) {
+			computationSize(get_uint2(inputSize.x, inputSize.y)) {
 
 		this->_initPose = initPose;
 		this->volumeDimensions = volumeDimensions;
@@ -120,7 +120,7 @@ public:
 //Allow a kfusion object to be created with a pose which include orientation as well as position
 	Kfusion(uint2 inputSize, uint3 volumeResolution, float3 volumeDimensions,
 			Matrix4 initPose, std::vector<int> & pyramid) :
-			computationSize(make_uint2(inputSize.x, inputSize.y)) {
+			computationSize(get_uint2(inputSize.x, inputSize.y)) {
 		this->_initPose = getPosition();
 		this->volumeDimensions = volumeDimensions;
 		this->volumeResolution = volumeResolution;
@@ -153,7 +153,7 @@ public:
 		float xt = pose.data[0].w - _initPose.x;
 		float yt = pose.data[1].w - _initPose.y;
 		float zt = pose.data[2].w - _initPose.z;
-		return (make_float3(xt, yt, zt));
+		return (get_float3(xt, yt, zt));
 	}
 	void computeFrame(const ushort * inputDepth, const uint2 inputSize,
 			float4 k, uint integration_rate, uint tracking_rate,
