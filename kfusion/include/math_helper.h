@@ -28,6 +28,36 @@ inline float rsqrtf(float x) {
 }
 
 /*******************************************************************************
+ *
+ * Additional operators. 
+ *
+*******************************************************************************/
+
+inline float2 operator*(const float b, const float2 a){
+  return get_float2(b * a.x, b * a.y);
+}
+
+inline float3 operator*(const float b, const float3 a){
+  return get_float3(b * a.x, b * a.y, b * a.z);
+}
+
+inline float4 operator*(const float b, const float4 a){
+  return get_float4(b * a.x, b * a.y, b * a.z, b * a.w);
+}
+
+inline float2 operator/(const float b, const float2 a){
+  return get_float2(b / a.x, b / a.y);
+}
+
+inline float3 operator/(const float b, const float3 a){
+  return get_float3(b / a.x, b / a.y, b / a.z);
+}
+
+inline float4 operator/(const float b, const float4 a){
+  return get_float4(b / a.x, b / a.y, b / a.z, b / a.w);
+}
+
+/*******************************************************************************
  * 
  * Min functions
  *
