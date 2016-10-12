@@ -61,114 +61,138 @@ struct vector4 {
 
   // ADDITION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator+=(const T& rhs) {
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
+    operator+=(const T rhs) {
       x += rhs;
       y += rhs;
       z += rhs;
       w += rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator+=(const vector4<T>& rhs) {
       x += rhs.x;
       y += rhs.y;
       z += rhs.z;
       w += rhs.w;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator+(const T& rhs) const {
-      return vector4<T>(x + rhs, y + rhs, z + rhs, w + rhs);
+  friend 
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator+(vector4<T> lhs, const T& rhs) {
+      lhs += rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator+(const vector4<T>& rhs) const {
-      return vector4<T>(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator+(vector4<T> lhs, const vector4<T>& rhs){
+      lhs += rhs;
+      return lhs;
     }
 
   // SUBTRACTION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator-=(const T& rhs) {
       x -= rhs;
       y -= rhs;
       z -= rhs;
       w -= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator-=(const vector4<T>& rhs) {
       x -= rhs.x;
       y -= rhs.y;
       z -= rhs.z;
       w -= rhs.w;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator-(const vector4<T>& rhs) const {
-      return vector4<T>(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator-(vector4<T> lhs, const vector4<T>& rhs) {
+      lhs -= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator-(const T& rhs) const {
-      return vector4<T>(x - rhs, y - rhs, z - rhs, w - rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator-(vector4<T> lhs, const T& rhs) {
+      lhs -= rhs;
+      return lhs;
     }
 
   // MULTIPLICATION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator*=(const T& rhs) {
       x *= rhs;
       y *= rhs;
       z *= rhs;
       w *= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator*=(const vector4<T>& rhs) {
       x *= rhs.x;
       y *= rhs.y;
       z *= rhs.z;
       w *= rhs.w;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator*(const vector4<T>& rhs) const {
-      return vector4<T>(x * rhs.x, y * rhs.y, z * rhs.z, w * rhs.w);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator*(vector4<T> lhs, const vector4<T>& rhs) {
+      lhs *= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator*(const T& rhs) const {
-      return vector4<T>(x * rhs, y * rhs, z * rhs, w * rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator*(vector4<T> lhs, const T& rhs) {
+      lhs *= rhs;
+      return lhs;
     }
 
   // DIVISION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator/=(const T& rhs) {
       x /= rhs;
       y /= rhs;
       z /= rhs;
       w /= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>&>::type 
     operator/=(const vector4<T>& rhs) {
       x /= rhs.x;
       y /= rhs.y;
       z /= rhs.z;
       w /= rhs.w;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator/(const vector4<T>& rhs) const {
-      return vector4<T>(x / rhs.x, y / rhs.y, z / rhs.z, w / rhs.w);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator/(vector4<T> lhs, const vector4<T>& rhs) {
+      lhs /= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
-    operator/(const T& rhs) const {
-      return vector4<T>(x / rhs, y / rhs, z / rhs, w / rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector4<T>>::type 
+    operator/(vector4<T> lhs, const T& rhs) {
+      lhs /= rhs;
+      return lhs;
     }
 };
 
@@ -189,12 +213,6 @@ struct vector3 {
     y = T(); 
     z = T(); 
   }
-
-  // vector3(T val){
-  //   x = val; 
-  //   y = val; 
-  //   z = val; 
-  // }
 
   template<typename S>
   vector3(const vector3<S> val){
@@ -227,99 +245,121 @@ struct vector3 {
       z += rhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator+=(const vector3<T>& rhs) {
       x += rhs.x;
       y += rhs.y;
       z += rhs.z;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator+(const T& rhs) const {
-      return vector3<T>(x + rhs, y + rhs, z + rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator+(vector3<T> lhs, const T& rhs) {
+      lhs += rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator+(const vector3<T>& rhs) const {
-      return vector3<T>(x + rhs.x, y + rhs.y, z + rhs.z);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator+(vector3<T> lhs, const vector3<T>& rhs) {
+      lhs += rhs;
+      return lhs;
     }
 
   // SUBTRACTION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator-=(const T& rhs) {
       x -= rhs;
       y -= rhs;
       z -= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator-=(const vector3<T>& rhs) {
       x -= rhs.x;
       y -= rhs.y;
       z -= rhs.z;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator-(const vector3<T>& rhs) const {
-      return vector3<T>(x - rhs.x, y - rhs.y, z - rhs.z);
+  friend 
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator-(vector3<T> lhs, const vector3<T>& rhs) {
+      lhs -= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator-(const T& rhs) const {
-      return vector3<T>(x - rhs, y - rhs, z - rhs);
+  friend 
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator-(vector3<T> lhs, const T& rhs) {
+      lhs -= rhs;
+      return lhs;
     }
 
   // MULTIPLICATION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator*=(const T& rhs) {
       x *= rhs;
       y *= rhs;
       z *= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator*=(const vector3<T>& rhs) {
       x *= rhs.x;
       y *= rhs.y;
       z *= rhs.z;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator*(const vector3<T>& rhs) const {
-      return vector3<T>(x * rhs.x, y * rhs.y, z * rhs.z);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator*(vector3<T> lhs, const vector3<T>& rhs) {
+      lhs *= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator*(const T& rhs) const {
-      return vector3<T>(x * rhs, y * rhs, z * rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator*(vector3<T> lhs, const T& rhs) {
+      lhs *= rhs;
+      return lhs;
     }
 
   // DIVISION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator/=(const T& rhs) {
       x /= rhs;
       y /= rhs;
       z /= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>&>::type 
     operator/=(const vector3<T>& rhs) {
       x /= rhs.x;
       y /= rhs.y;
       z /= rhs.z;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator/(const vector3<T>& rhs) const {
-      return vector3<T>(x / rhs.x, y / rhs.y, z / rhs.z);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator/(vector3<T> lhs, const vector3<T>& rhs) {
+      lhs /= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
-    operator/(const T& rhs) const {
-      return vector3<T>(x / rhs, y / rhs, z / rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector3<T>>::type 
+    operator/(vector3<T> lhs, const T& rhs) {
+      lhs /= rhs;
+      return lhs;
     }
 
 };
@@ -338,11 +378,6 @@ struct vector2 {
   vector2(){
     x = T();
   }
-
-  // vector2(T val){
-  //   x = val; 
-  //   y = val; 
-  // }
 
   template<typename S>
   vector2(const vector2<S> val){
@@ -366,212 +401,122 @@ struct vector2 {
 
   // ADDITION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator+=(const T rhs) {
       x += rhs;
       y += rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator+=(const vector2<T> rhs) {
       x += rhs.x;
       y += rhs.y;
+      return *this;
     }
 
+  friend
   typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator+(const T rhs) const {
-      return vector2<T>(x + rhs, y + rhs);
+    operator+(vector2<T> lhs, const T rhs) {
+      lhs += rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator+(const vector2<T> rhs) const {
-      return vector2<T>(x + rhs.x, y + rhs.y);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator+(vector2<T> lhs, const vector2<T> rhs) {
+      lhs += rhs;
+      return lhs;
     }
 
   // SUBTRACTION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator-=(const T rhs) {
       x -= rhs;
       y -= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator-=(const vector2<T> rhs) {
       x -= rhs.x;
       y -= rhs.y;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator-(const vector2<T> rhs) const {
-      return vector2<T>(x - rhs.x, y - rhs.y);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator-(vector2<T> lhs, const vector2<T> rhs) {
+      lhs -= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator-(const T rhs) const {
-      return vector2<T>(x - rhs, y - rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator-(vector2<T> lhs, const T rhs) {
+      lhs -= rhs;
+      return lhs;
     }
 
   // MULTIPLICATION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator*=(const T rhs) {
       x *= rhs;
       y *= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator*=(const vector2<T> rhs) {
       x *= rhs.x;
       y *= rhs.y;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator*(const vector2<T> rhs) const {
-      return vector2<T>(x * rhs.x, y * rhs.y);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator*(vector2<T> lhs, const vector2<T> rhs) {
+      lhs *= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator*(const T rhs) const {
-      return vector2<T>(x * rhs, y * rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator*(vector2<T> lhs, const T rhs) {
+      lhs *= rhs;
+      return lhs;
     }
 
   // DIVISION
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator/=(const T rhs) {
       x /= rhs;
       y /= rhs;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
+  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>&>::type 
     operator/=(const vector2<T> rhs) {
       x /= rhs.x;
       y /= rhs.y;
+      return *this;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator/(const vector2<T> rhs) const {
-      return vector2<T>(x / rhs.x, y / rhs.y);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator/(vector2<T> lhs, const vector2<T> rhs) {
+      lhs /= rhs;
+      return lhs;
     }
 
-  typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
-    operator/(const T rhs) const {
-      return vector2<T>(x / rhs, y / rhs);
-    }
-};
-
-/*******************************************************************************
- *
- * Vector 1
- *
-*******************************************************************************/
-
-template<typename T>
-struct vector1 {
-  T x; 
-
-  vector1(){
-    x = T();
-  }
-
-  vector1(T _x){
-    x = _x;
-  }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator-() const {
-      vector1<T> ret;
-      ret.x = -x;
-      return ret;
-    }
-
-  // ADDITION
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator+=(const T rhs) {
-      x += rhs;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator+=(const vector1<T> rhs) {
-      x += rhs.x;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator+(const T rhs) const {
-      return vector1<T>(x + rhs);
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator+(const vector1<T> rhs) const {
-      return vector1<T>(x + rhs.x);
-    }
-
-  // SUBTRACTION
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator-=(const T rhs) {
-      x -= rhs;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator-=(const vector1<T> rhs) {
-      x -= rhs.x;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator-(const vector1<T> rhs) const {
-      return vector1<T>(x - rhs.x);
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator-(const T rhs) const {
-      return vector1<T>(x - rhs);
-    }
-
-  // MULTIPLICATION
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator*=(const T rhs) {
-      x *= rhs;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator*=(const vector1<T> rhs) {
-      x *= rhs.x;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator*(const vector1<T> rhs) const {
-      return vector1<T>(x * rhs.x);
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator*(const T rhs) const {
-      return vector1<T>(x * rhs);
-    }
-
-  // DIVISION
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator/=(const T rhs) {
-      x /= rhs;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value>::type 
-    operator/=(const vector1<T> rhs) {
-      x /= rhs.x;
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator/(const vector1<T> rhs) const {
-      return vector1<T>(x / rhs.x);
-    }
-
-  typename std::enable_if<std::is_arithmetic<T>::value, vector1<T>>::type 
-    operator/(const T rhs) const {
-      return vector1<T>(x / rhs);
+  friend
+    typename std::enable_if<std::is_arithmetic<T>::value, vector2<T>>::type 
+    operator/(vector2<T> lhs, const T rhs) {
+      lhs /= rhs;
+      return lhs;
     }
 };
 
@@ -580,17 +525,6 @@ struct vector1 {
  * Additional operators. 
  *
 *******************************************************************************/
-
-template<typename Scalar, typename T>
-typename std::enable_if<std::is_scalar<Scalar>::value, vector1<T>>::type 
-operator*(const Scalar b, const vector1<T> a){
-  return vector1<T>(b * a.x);
-}
-template<typename Scalar, typename T>
-typename std::enable_if<std::is_scalar<Scalar>::value, vector2<T>>::type 
-operator*(const Scalar b, const vector2<T> a){
-  return vector2<T>(b * a.x, b * a.y);
-}
 
 template<typename Scalar, typename T>
 typename std::enable_if<std::is_scalar<Scalar>::value, vector3<T>>::type 
@@ -618,43 +552,33 @@ inline vector3<T> toVec3(const vector4<T>& vec){
 *******************************************************************************/
 
 typedef unsigned char uchar;
-typedef struct vector1<char> char1;
-typedef struct vector1<unsigned char> uchar1;
 typedef struct vector2<char> char2;
 typedef struct vector2<unsigned char> uchar2;
 typedef struct vector3<char> char3;
 typedef struct vector3<unsigned char> uchar3;
 typedef struct vector4<char> char4;
 typedef struct vector4<unsigned char> uchar4;
-typedef struct vector1<short> short1;
-typedef struct vector1<ushort> ushort1;
 typedef struct vector2<short> short2;
 typedef struct vector2<ushort> ushort2;
 typedef struct vector3<short> short3;
 typedef struct vector3<ushort> ushort3;
 typedef struct vector4<short> short4;
 typedef struct vector4<ushort> ushort4;
-typedef struct vector1<int> int1;
-typedef struct vector1<uint> uint1;
 typedef struct vector2<int> int2;
 typedef struct vector2<uint> uint2;
 typedef struct vector3<int> int3;
 typedef struct vector3<uint> uint3;
 typedef struct vector4<int> int4;
 typedef struct vector4<uint> uint4;
-typedef struct vector1<long> long1;
-typedef struct vector1<ulong> ulong1;
 typedef struct vector2<long> long2;
 typedef struct vector2<ulong> ulong2;
 typedef struct vector3<long> long3;
 typedef struct vector3<ulong> ulong3;
 typedef struct vector4<long> long4;
 typedef struct vector4<ulong> ulong4;
-typedef struct vector1<float> float1;
 typedef struct vector2<float> float2;
 typedef struct vector3<float> float3;
 typedef struct vector4<float> float4;
-typedef struct vector1<double> double1;
 typedef struct vector2<double> double2;
 typedef struct vector3<double> double3;
 typedef struct vector4<double> double4;
